@@ -1,0 +1,30 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="cadastro" class="form-group row" style="margin-top: 50px;">
+    <div class="col-lg-12">
+        <form method="post" action="@Url.Action("CadastrarCliente", "Home")">
+
+            <div class="form-group row">
+                <div class="col-md-6">
+                    <label id="lb1" for="nomeCliente">Nome do cliente:</label>
+                    <input type="text" id="nomeCliente" class="form-control" name="nomeCliente" required>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-6">
+                    <label id="lb2" for="titulo">Descrição:</label>
+                    <input type="text" id="descricao" class="form-control" placeholder="Escreva uma descrição para o cliente" name="descricao">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-3">
+                    <button type="submit" id="Button1" Style="outline: none" class="btn btn-primary">Cadastrar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

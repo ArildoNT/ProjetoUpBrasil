@@ -1,0 +1,212 @@
+﻿
+<script>
+    function SetDataModal(id, cliente, descricao, ativo, dtCadastro) {
+        document.getElementById('idCliente').value = id;
+        document.getElementById('nomeCliente').value = cliente;
+        document.getElementById('descricao').value = descricao;
+        if (ativo == 1) {
+            document.getElementById('ativo1').checked = true;
+        }
+        else {
+            document.getElementById('ativo0').checked = true;
+        }
+    }
+    function SetDataModalExcluir(id) {
+        document.getElementById('codCliente').value = id;
+    }
+</script>
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="margin-top: 50px;">
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingOne">
+            <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                    Formulário de busca
+                </a>
+            </h4>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+            <div class="panel-body">
+                <div id="busca" class="form-group row">
+                    <div class="col-lg-12">
+                        <form method="post" action="@Url.Action("Busca", "Home")">
+
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label id="lbsearch1" for="nomeSearch">Buscar por nome do cliente:</label>
+                                    <input type="text" id="nomeSearch" class="form-control" name="nomeSearch">
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label id="lbsearch2" for="codSearch">Buscar pelo código do cliente:</label>
+                                    <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" id="codSearch" class="form-control" name="codSearch">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-md-6" style="width: 80%;">
+                                    <label id="lbsearch3" for="ativosearch">Buscar por clientes ativos?</label>
+                                    <div class="form-check">
+                                        <label class="radio-inline form-check-label">
+                                            <input type="radio" id="ativoSearch0" class="form-check-input" name="ativosearch" value="0"> Não
+                                        </label>
+                                        <label class="radio-inline form-check-label">
+                                            <input type="radio" id="ativoSearch1" class="form-check-input" name="ativosearch" value="1"> Sim
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6" style="width: 80%;">
+                                    <br />
+                                    <label id="lbsearch4">Busca por período</label>
+                                    <br />
+                                    <label id="lbsearch5" for="dtInicial">Data Inicial: </label>
+                                    <input type="date" id="dtInicial" class="form-inline form-control" name="dtInicial">
+                                    <br />
+                                    <label id="lbsearch6" for="dtFinal">Data Final: </label>
+                                    <input type="date" id="dtFinal" class="form-inline form-control" name="dtFinal">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-md-3">
+                                    <button type="submit" id="ButtonSearch" Style="outline: none" class="btn btn-primary">Buscar</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="table-wrapper" class="panel panel-default" style="margin-top: 25px;">
+    <div id="table-scroll" class="table-scroll panel-heading">
+        <table id="t01" class="table" style="margin-bottom: 0px">
+            <thead>
+                <tr>
+                    <th style="text-align: center;">Código do Cliente</th>
+                    <th style="text-align: center;">Nome do Cliente</th>
+                    <th style="text-align: center;">Descrição</th>
+                    <th style="text-align: center;">Ativo</th>
+                    <th style="text-align: center;">Data do Cadastro</th>
+                    <th style="text-align: center;">Editar</th>
+                    <th style="text-align: center;">Excluir</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var cliente in ViewBag.Clientes)
+                {
+                    <tr>
+                        <td style="text-align: center;">@cliente.IdCliente</td>
+                        <td style="text-align: center;">@cliente.NomeCliente</td>
+                        <td style="text-align: center;">@cliente.Descricao</td>
+                        <td style="text-align: center;">@(cliente.Ativo == 1 ? "sim" : "não")</td>
+                        <td style="text-align: center;">@cliente.DtCadastro.ToString("dd/MM/yyyy")</td>
+                        <td style="text-align: center;">
+                            <a class="editar" button onclick="SetDataModal('@cliente.IdCliente', '@cliente.NomeCliente', '@cliente.Descricao', '@cliente.Ativo')" data-toggle="modal" alt="Editar comentário" href=@Url.Content("~/Views/Home/Index.cshtml#modalEdicaoDeCadastro")>
+                                <i class="fa fa-edit"></i>
+                            </a>
+                        </td>
+                        <td style="text-align: center;">
+                            <a class="excluir" button onclick="SetDataModalExcluir('@cliente.IdCliente')" data-toggle="modal" alt="Excluir cadastro" href=@Url.Content("~/Views/Home/Index.cshtml#modalConfirmarExclusao")>
+                                <i class="fa fa-trash-o"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="form-group row">
+    <div class="col-md-2">
+        <a class="btn btn-primary" type="button" href="@Url.Action("CadastrarCliente", "Home")">Cadastrar Cliente</a>
+    </div>
+    @if (ViewBag.Buscou == true)
+    {
+        <div id="btnAtualizar" class="col-md-2">
+            <a class="btn btn-primary" type="button" href="@Url.Action("Index", "Home")">Atualizar Página</a>
+        </div>
+    }
+</div>
+
+<!--MODAL EDIÇÃO-->
+<div aria-hidden="true" aria-labelledby="modalEdicaoDeCadastro" role="dialog" tabindex="-1" id="modalEdicaoDeCadastro" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="@Url.Action("EditarCadastro", "Home")" method="post" id="alterarCadastro">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Editar Cadastro de Cliente</h4>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <div class="form-group row">
+                            <input type="hidden" id="idCliente" name="idCliente" value="" />
+
+                            <div class="col-md-6" style="width: 80%;">
+                                <label id="lb1" for="nomeCliente">Nome do cliente:</label>
+                                <input type="text" id="nomeCliente" class="form-control" name="nomeCliente" value="">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-3" style="width: 50%;">
+                                <label id="lb2" for="descricao">Descrição:</label>
+                                <input type="text" id="descricao" class="form-control" placeholder="Descreva o cliente aqui" name="descricao" value="">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-6" style="width: 80%;">
+                                <label id="lb3" for="ativo">Cliente está ativo?</label>
+                                <div class="form-check">
+                                    <label class="radio-inline form-check-label">
+                                        <input type="radio" id="ativo0" class="form-check-input" name="ativo" value="0"> Não
+                                    </label>
+                                    <label class="radio-inline form-check-label">
+                                        <input type="radio" id="ativo1" class="form-check-input" name="ativo" value="1"> Sim
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button data-dismiss="modal" style="outline: none" class="btn btn-default" type="button">Cancelar</button>
+                    <button type="submit" style="outline: none" class="btn btn-primary">Confirmar</button>
+                    <br>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--FIM MODAL EDIÇÃO-->
+<!--MODAL CONFIRMAR EXCLUSÃO-->
+<div aria-hidden="true" aria-labelledby="modalConfirmarExclusao" role="dialog" tabindex="-1" id="modalConfirmarExclusao" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="@Url.Action("ExcluirCadastro", "Home")" method="post" id="excluirCadastro">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Tem certeza que deseja excluir o cadastro desse cliente?</h4>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <input type="hidden" id="codCliente" name="codCliente" value="" />
+                        <p>Atenção! Você está prestes a excluir o cadastro de um Cliente! Após confirmar a exclusão não haverá possibilidade de recuperação dos dados!</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button data-dismiss="modal" style="outline: none" class="btn btn-default" type="button">Não</button>
+                    <button type="submit" style="outline: none" class="btn btn-primary">Sim</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--FIM MODAL CONFIRMAR EXCLUSÃO-->
